@@ -120,11 +120,11 @@ Source for `posframe-show` (2) POSHANDLER:
     (posframe-show dict-line--posframe-buffer
                    :string dict-line-dict
                    :max-width 30
-                   :left-fringe 5
-                   :right-fringe 5
-                   :poshandler dict-line-posframe-location
-                   :border-width 5;; 外边框大小
-                   :border-color "#ed98cc" ;; 边框颜色
+                   :position (point)
+                   :background-color "#3b3b3b"
+                   :foreground-color "#84d419"
+                   :border-width 5
+                   :border-color "#3b3b3b"
                    )
     )
   )
