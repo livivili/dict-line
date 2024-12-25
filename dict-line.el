@@ -15,9 +15,13 @@
 ;;
 ;; This package is quickly view git blame information of the current file line in Emacs in real time.
 
-;;; Code:
+;;; Require:
 (require 'async)
 (require 'posframe)
+
+;;; Code:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Customize ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defgroup dict-line nil
   "Emacs dictionary lookup on cursor movement."
@@ -60,17 +64,10 @@ Default example: -volume 80 to mplayer play volume 80%"
   :type 'number
   :group 'dict-line)
 
-(defvar dict-line-word nil
-  "dict-line point word.")
-
-(defvar dict-line-dict nil
-  "dict-line result dict txt.")
-
-(defvar dict-line--current-buffer nil
-  "dict-line word current buffer name.")
-
-(defvar dict-line--posframe-buffer "*dict-line-posframe*"
-  "dict-line show dict txt buffer.")
+(defcustom dict-line-posframe-border-width 10
+  "The border width of dict-line-posframe, in pixels."
+  :type 'integer
+  :group 'dict-line)
 
 (defcustom dict-line-posframe-location #'posframe-poshandler-point-bottom-left-corner
   "The location function for displaying the dict-line posframe.
@@ -108,6 +105,29 @@ Source for `posframe-show` (2) POSHANDLER:
                  function)
   :group 'dict-line)
 
+
+(defface dict-line-posframe-face
+  '((t (:foreground "green" :background "gray12")))
+  "Face for sdcv tooltip"
+  :group 'dict-line)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Variable ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defvar dict-line-word nil
+  "dict-line point word.")
+
+(defvar dict-line-dict nil
+  "dict-line result dict txt.")
+
+(defvar dict-line--current-buffer nil
+  "dict-line word current buffer name.")
+
+(defvar dict-line--posframe-buffer " *dict-line-posframe*"
+  "dict-line show dict txt buffer.")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun dict-line--message ()
   "dict-line display function."
   (dict-line--dict-convert)
@@ -121,10 +141,10 @@ Source for `posframe-show` (2) POSHANDLER:
                    :string dict-line-dict
                    :max-width 30
                    :position (point)
-                   :background-color "#3b3b3b"
-                   :foreground-color "#84d419"
-                   :border-width 5
-                   :border-color "#3b3b3b"
+                   :background-color (face-attribute 'dict-line-posframe-face :background)
+                   :foreground-color (face-attribute 'dict-line-posframe-face :foreground)
+                   :border-width dict-line-posframe-border-width
+                   :border-color (face-attribute 'dict-line-posframe-face :background)
                    )
     )
   )
