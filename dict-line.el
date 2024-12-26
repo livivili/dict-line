@@ -64,6 +64,12 @@ Default example: -volume 80 to mplayer play volume 80%"
   :type 'number
   :group 'dict-line)
 
+(defcustom dict-line-display #'dict-line--message
+  "dict-line to display function."
+  :type '(choice (const nil)
+                 function)
+  :group 'dict-line)
+
 (defcustom dict-line-posframe-border-width 10
   "The border width of dict-line-posframe, in pixels."
   :type 'integer
@@ -98,19 +104,10 @@ Source for `posframe-show` (2) POSHANDLER:
                  function)
   :group 'dict-line)
 
-
-(defcustom dict-line-display #'dict-line--message
-  "dict-line to display function."
-  :type '(choice (const nil)
-                 function)
-  :group 'dict-line)
-
-
 (defface dict-line-posframe-face
-  '((t (:foreground "green" :background "gray12")))
+  '((t (:foreground "#00ff00" :background "gray12")))
   "Face for sdcv tooltip"
   :group 'dict-line)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Variable ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -163,8 +160,8 @@ Source for `posframe-show` (2) POSHANDLER:
   )
 
 (defun dict-line--get-dict-async ()
-  (interactive)
   "Check the word under cursor and look it up in the dictionary asynchronously."
+  (interactive)
   (let ((word (if (use-region-p) ;; Check if there is a selected area
                   (buffer-substring-no-properties (region-beginning) (region-end)) ;; Use selected text
                 (thing-at-point 'word t))) ;; Otherwise use the word under the cursor
