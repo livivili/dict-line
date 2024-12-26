@@ -137,14 +137,15 @@ Source for `posframe-show` (2) POSHANDLER:
     (posframe-show dict-line--posframe-buffer
                    :string dict-line-dict
                    :max-width 30
+                   :timeout 10
                    :position (point)
                    :background-color (face-attribute 'dict-line-posframe-face :background)
                    :foreground-color (face-attribute 'dict-line-posframe-face :foreground)
                    :border-width dict-line-posframe-border-width
-                   :border-color (face-attribute 'dict-line-posframe-face :background)
-                   )
-    )
-  )
+                   :border-color (face-attribute 'dict-line-posframe-face :background)))
+  (unwind-protect
+      (push (read-event " ") unread-command-events)
+    (posframe-delete dict-line--posframe-buffer)))
 
 (defun dict-line--posframe-delete ()
   "Delete the posframe associated with BUFFER if it exists."
@@ -159,6 +160,7 @@ Source for `posframe-show` (2) POSHANDLER:
   (setq dict-line-dict (substring dict-line-dict 1 -2))
   )
 
+;;;###autoload
 (defun dict-line--get-dict-async ()
   "Check the word under cursor and look it up in the dictionary asynchronously."
   (interactive)
@@ -223,24 +225,5 @@ Source for `posframe-show` (2) POSHANDLER:
         (insert (concat "\n" entry))
         (write-region (point-min) (point-max) dict-line-dict-personal-file))
       (message "Save %s to %s" entry dict-line-dict-personal-file))))
-
-;; TODO not completed
-;;;###autoload
-(define-minor-mode dict-line-mode
-  "Minor mode to look up words under the cursor asynchronously."
-  :lighter " "
-  :group 'dict-line
-  (if dict-line-mode
-      (progn
-        ;; Start the idle timer for asynchronous word lookup
-        (run-with-idle-timer dict-line-idle-time t #'dict-line--get-dict-async)
-        ;; Add hook to delete posframe after each command
-        (add-hook 'post-command-hook #'dict-line--posframe-delete))
-    ;; Cancel all timers for dict-line--get-dict-async
-    (cancel-function-timers #'dict-line--get-dict-async)
-    ;; Remove the hook for deleting posframe
-    (remove-hook 'post-command-hook #'dict-line--posframe-delete))
-  )
-
 
 (provide 'dict-line)
