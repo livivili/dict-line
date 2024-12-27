@@ -75,35 +75,6 @@ Default example: -volume 80 to mplayer play volume 80%"
   :type 'integer
   :group 'dict-line)
 
-(defcustom dict-line-posframe-location #'posframe-poshandler-point-bottom-left-corner
-  "The location function for displaying the dict-line posframe.
-Choose from a list of `posframe` position handlers to control where
-the posframe appears relative to the frame, window, or point.
-Source for `posframe-show` (2) POSHANDLER:
-1.  posframe-poshandler-frame-center
-2.  posframe-poshandler-frame-top-center
-3.  posframe-poshandler-frame-top-left-corner
-4.  posframe-poshandler-frame-top-right-corner
-5.  posframe-poshandler-frame-top-left-or-right-other-corner
-6.  posframe-poshandler-frame-bottom-center
-7.  posframe-poshandler-frame-bottom-left-corner
-8.  posframe-poshandler-frame-bottom-right-corner
-9.  posframe-poshandler-window-center
-10. posframe-poshandler-window-top-center
-11. posframe-poshandler-window-top-left-corner
-12. posframe-poshandler-window-top-right-corner
-13. posframe-poshandler-window-bottom-center
-14. posframe-poshandler-window-bottom-left-corner
-15. posframe-poshandler-window-bottom-right-corner
-16. posframe-poshandler-point-top-left-corner
-17. posframe-poshandler-point-bottom-left-corner
-18. posframe-poshandler-point-bottom-left-corner-upward
-19. posframe-poshandler-point-window-center
-20. posframe-poshandler-point-frame-center"
-  :type '(choice (const nil)
-                 function)
-  :group 'dict-line)
-
 (defface dict-line-posframe-face
   '((t (:foreground "#00ff00" :background "gray12")))
   "Face for sdcv tooltip"
@@ -225,5 +196,22 @@ Source for `posframe-show` (2) POSHANDLER:
         (insert (concat "\n" entry))
         (write-region (point-min) (point-max) dict-line-dict-personal-file))
       (message "Save %s to %s" entry dict-line-dict-personal-file))))
+
+;;;###autoload
+(define-minor-mode dict-line-mode
+  "Minor mode to look up words under the cursor asynchronously."
+  :lighter " "
+  :group 'dict-line
+  (if dict-line-mode
+      (progn
+        ;; Start the idle timer for asynchronous word lookup
+        (run-with-idle-timer dict-line-idle-time t #'dict-line--get-dict-async)
+        ;; Add hook to delete posframe after each command
+        (add-hook 'post-command-hook #'dict-line--posframe-delete))
+    ;; Cancel all timers for dict-line--get-dict-async
+    (cancel-function-timers #'dict-line--get-dict-async)
+    ;; Remove the hook for deleting posframe
+    (remove-hook 'post-command-hook #'dict-line--posframe-delete))
+  )
 
 (provide 'dict-line)
