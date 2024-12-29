@@ -179,8 +179,7 @@ On macOS, use the `say` command. On other systems, use mpv, mplayer, or mpg123."
        (lambda (dicts)
          ;; Play audio
          (when dict-line-audio
-           (when dict-line-audio
-             (dict-line--play-audio dict-line-word)))
+           (dict-line--play-audio dict-line-word))
          (when dicts
            (setq dict-line-dict dicts)
            (with-current-buffer (get-buffer-create dict-line--current-buffer)
