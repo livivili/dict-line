@@ -131,25 +131,24 @@ Default example: -volume 80 to mplayer play volume 80%"
   (setq dict-line-dict (substring dict-line-dict 1 -2))
   )
 
-;; From: github.com/manateelazycat/sdcv/blob/master/sdcv.el#L526
+;; Inspired by: github.com/manateelazycat/sdcv/blob/master/sdcv.el#L526
 (defun dict-line--play-audio (word)
-  "Play the audio pronunciation of the given WORD.
-On macOS, use the `say` command. On other systems, use mpv, mplayer, or mpg123."
+  "Play the audio pronunciation of the given WORD."
   (if (featurep 'cocoa)
       ;; macOS: Use `say` command
       (call-process-shell-command
        (format "say %s" word) nil 0)
-    ;; Non-macOS: Use mpv, mplayer, or mpg123
-    (let ((player (or (executable-find "mpv")
-                      (executable-find "mplayer")
-                      (executable-find "mpg123"))))
+    ;; Non-macOS: Use the specified audio play program
+    (let ((player (executable-find dict-line-audio-play-program)))
       (if player
-          (start-process
-           player
-           nil
-           player
-           (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word)))
-        (message "mpv, mplayer or mpg123 is needed to play word voice")))))
+          (let ((args (split-string dict-line-audio-play-program-arg)))
+            ;; Ensure args is a list, even if empty
+            (unless args (setq args '()))
+            ;; Add the URL as the last argument
+            (setq args (append args (list (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word)))))
+            ;; Start the process
+            (apply #'start-process player nil player args))
+        (message "%s is needed to play word voice" dict-line-audio-play-program)))))
 
 ;;;###autoload
 (defun dict-line--get-dict-async ()
