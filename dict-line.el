@@ -42,11 +42,6 @@
   :type 'boolean
   :group 'dict-line)
 
-(defcustom dict-line-audio-root-dir "~/my-dict/my-audio/"
-  "The directory where audio files are stored."
-  :type 'directory
-  :group 'dict-line)
-
 (defcustom dict-line-audio-play-program "mplayer"
   "Play audio file program.
 List: `mplayer`, `mpg123`, `mpv`"
