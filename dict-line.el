@@ -154,6 +154,7 @@ Default example: -volume 80 to mplayer play volume 80%"
                   (append args
                           (list
                            (if dict-line-use-local-audio
+                               ;; use local audio
                                (let* ((first-letter (upcase (substring word 0 1)))
                                       (audio-file (concat dict-line-audio-root-dir "/" first-letter "/" (downcase word) ".mp3")))
                                  (if (file-exists-p audio-file)
@@ -161,6 +162,7 @@ Default example: -volume 80 to mplayer play volume 80%"
                                    (progn
                                      (message "Local audio file for '%s' not found, switching to remote." word)
                                      (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word)))))
+                             ;; use remote audio
                              (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word))))))
             ;; Start the process
             (apply #'start-process player nil player args))
@@ -235,5 +237,4 @@ Default example: -volume 80 to mplayer play volume 80%"
     ;; Remove the hook for deleting posframe
     (remove-hook 'post-command-hook #'dict-line--posframe-delete))
   )
-
 (provide 'dict-line)
