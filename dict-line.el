@@ -42,10 +42,20 @@
   :type 'boolean
   :group 'dict-line)
 
+(defcustom dict-line-use-local-audio nil
+  "Determines whether to use local audio."
+  :type 'boolean
+  :group 'dict-line)
+
 (defcustom dict-line-audio-play-program "mplayer"
   "Play audio file program.
 List: `mplayer`, `mpg123`, `mpv`"
   :type 'string
+  :group 'dict-line)
+
+(defcustom dict-line-audio-root-dir "~/my-dict/my-audio/"
+  "The directory where audio files are stored."
+  :type 'directory
   :group 'dict-line)
 
 (defcustom dict-line-audio-play-program-arg ""
@@ -140,7 +150,18 @@ Default example: -volume 80 to mplayer play volume 80%"
             ;; Ensure args is a list, even if empty
             (unless args (setq args '()))
             ;; Add the URL as the last argument
-            (setq args (append args (list (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word)))))
+            (setq args
+                  (append args
+                          (list
+                           (if dict-line-use-local-audio
+                               (let* ((first-letter (upcase (substring word 0 1)))
+                                      (audio-file (concat dict-line-audio-root-dir "/" first-letter "/" (downcase word) ".mp3")))
+                                 (if (file-exists-p audio-file)
+                                     audio-file
+                                   (progn
+                                     (message "Local audio file for '%s' not found, switching to remote." word)
+                                     (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word)))))
+                             (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word))))))
             ;; Start the process
             (apply #'start-process player nil player args))
         (message "%s is needed to play word voice" dict-line-audio-play-program)))))
