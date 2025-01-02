@@ -139,8 +139,7 @@ Default example: -volume 80 to mplayer play volume 80%"
   "Play the audio pronunciation of the given WORD."
   (if (featurep 'cocoa)
       ;; macOS: Use `say` command
-      (call-process-shell-command
-       (format "say %s" word) nil 0)
+      (call-process-shell-command (format "say %s" word) nil 0)
     ;; Non-macOS: Use the specified audio play program
     (let ((player (executable-find dict-line-audio-play-program)))
       (if player
@@ -157,9 +156,8 @@ Default example: -volume 80 to mplayer play volume 80%"
                                       (audio-file (concat dict-line-audio-root-dir "/" first-letter "/" (downcase word) ".mp3")))
                                  (if (file-exists-p audio-file)
                                      audio-file
-                                   (progn
-                                     (message "Local audio file for '%s' not found, switching to remote." word)
-                                     (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word)))))
+                                   (message "Local audio file for '%s' not found, switching to remote." word)
+                                   (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word))))
                              ;; use remote audio
                              (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word))))))
             ;; Start the process
