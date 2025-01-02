@@ -121,20 +121,18 @@ Default example: -volume 80 to mplayer play volume 80%"
                    :border-color (face-attribute 'dict-line-posframe-face :background)))
   (unwind-protect
       (push (read-event " ") unread-command-events)
-    (posframe-delete dict-line--posframe-buffer)))
+    (posframe-hide dict-line--posframe-buffer)))
 
 (defun dict-line--posframe-delete ()
   "Delete the posframe associated with BUFFER if it exists."
   (when (eq dict-line-display #'dict-line--posframe)
-    (posframe-hide dict-line--posframe-buffer))
-  )
+    (posframe-hide dict-line--posframe-buffer)))
 
 (defun dict-line--dict-convert ()
   "dict-line convert dict txt."
   (setq dict-line-dict (replace-regexp-in-string "\\\\\\\\n" "\n" dict-line-dict))
   (setq dict-line-dict (replace-regexp-in-string "\"," "\" " dict-line-dict))
-  (setq dict-line-dict (substring dict-line-dict 1 -2))
-  )
+  (setq dict-line-dict (substring dict-line-dict 1 -2)))
 
 ;; Inspired by: github.com/manateelazycat/sdcv/blob/master/sdcv.el#L526
 (defun dict-line--play-audio (word)
@@ -166,7 +164,8 @@ Default example: -volume 80 to mplayer play volume 80%"
                              (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word))))))
             ;; Start the process
             (apply #'start-process player nil player args))
-        (message "%s is needed to play word voice" dict-line-audio-play-program)))))
+        (message "%s is needed to play word voice" dict-line-audio-play-program))))
+  )
 
 ;;;###autoload
 (defun dict-line--get-dict-async ()
@@ -201,10 +200,7 @@ Default example: -volume 80 to mplayer play volume 80%"
            (setq dict-line-dict dicts)
            (with-current-buffer (get-buffer-create dict-line--current-buffer)
              (when (functionp dict-line-display)
-               (funcall dict-line-display))))))
-      )
-    )
-  )
+               (funcall dict-line-display)))))))))
 
 ;;;###autoload
 (defun dict-line-word-save-from-echo ()
@@ -235,6 +231,6 @@ Default example: -volume 80 to mplayer play volume 80%"
     ;; Cancel all timers for dict-line--get-dict-async
     (cancel-function-timers #'dict-line--get-dict-async)
     ;; Remove the hook for deleting posframe
-    (remove-hook 'post-command-hook #'dict-line--posframe-delete))
-  )
+    (remove-hook 'post-command-hook #'dict-line--posframe-delete)))
+
 (provide 'dict-line)
