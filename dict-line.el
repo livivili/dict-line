@@ -164,8 +164,7 @@ Default example: -volume 80 to mplayer play volume 80%"
                              (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word))))))
             ;; Start the process
             (apply #'start-process player nil player args))
-        (message "%s is needed to play word voice" dict-line-audio-play-program))))
-  )
+        (message "%s is needed to play word voice" dict-line-audio-play-program)))))
 
 ;;;###autoload
 (defun dict-line--get-dict-async ()
