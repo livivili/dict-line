@@ -99,6 +99,9 @@ Default example: -volume 80 to mplayer play volume 80%"
 (defvar dict-line--posframe-buffer " *dict-line-posframe*"
   "dict-line show dict txt buffer.")
 
+(defvar dict-line--found-flag t
+  "Non-nil if the word was found in dictionary.")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun dict-line--message ()
@@ -130,9 +133,10 @@ Default example: -volume 80 to mplayer play volume 80%"
 
 (defun dict-line--dict-convert ()
   "dict-line convert dict txt."
-  (setq dict-line-dict (replace-regexp-in-string "\\\\\\\\n" "\n" dict-line-dict))
-  (setq dict-line-dict (replace-regexp-in-string "\"," "\" " dict-line-dict))
-  (setq dict-line-dict (substring dict-line-dict 1 -2)))
+  (when dict-line--found-flag
+    (setq dict-line-dict (replace-regexp-in-string "\\\\\\\\n" "\n" dict-line-dict))
+    (setq dict-line-dict (replace-regexp-in-string "\"," "\" " dict-line-dict))
+    (setq dict-line-dict (substring dict-line-dict 1 -2))))
 
 ;; Inspired by: github.com/manateelazycat/sdcv/blob/master/sdcv.el#L526
 (defun dict-line--play-audio (word)
@@ -193,11 +197,14 @@ Default example: -volume 80 to mplayer play volume 80%"
          ;; Play audio
          (when dict-line-audio
            (dict-line--play-audio dict-line-word))
-         (when dicts
-           (setq dict-line-dict dicts)
-           (with-current-buffer (get-buffer-create dict-line--current-buffer)
-             (when (functionp dict-line-display)
-               (funcall dict-line-display)))))))))
+         (if dicts
+             (setq dict-line-dict dicts
+                   dict-line--found-flag t)
+           (setq dict-line-dict "没有找到释义('_')"
+                 dict-line--found-flag nil))
+         (with-current-buffer (get-buffer-create dict-line--current-buffer)
+           (when (functionp dict-line-display)
+             (funcall dict-line-display))))))))
 
 ;;;###autoload
 (defun dict-line-word-save-from-echo ()
