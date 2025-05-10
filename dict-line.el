@@ -160,10 +160,9 @@ Default example: -volume 80 to mplayer play volume 80%"
                                       (audio-file (concat dict-line-audio-root-dir "/" first-letter "/" (downcase word) ".mp3")))
                                  (if (file-exists-p audio-file)
                                      audio-file
-                                   (message "Local audio file for '%s' not found, switching to remote." word)
                                    (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word))))
                              ;; use remote audio
-                             (format "http://dict.youdao.com/dictvoice?type=2&audio=%s" (url-hexify-string word))))))
+                             (format "http://dict.youdao.com/dictvoice?type=1&audio=%s" (url-hexify-string word))))))
             ;; Start the process
             (apply #'start-process player nil player args))
         (message "%s is needed to play word voice" dict-line-audio-play-program)))))
